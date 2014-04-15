@@ -444,7 +444,7 @@ inline void ZooKeeperNetwork::collected(
 
   foreach (const std::string& data, datas.get()) {
     process::UPID pid(data);
-    CHECK(pid) << "Failed to parse '" << data << "'";
+    CHECK(pid) << "ZooKeeperNetwork::collected Failed to parse '" << data << "'";
     pids.insert(pid);
   }
 

@@ -133,7 +133,7 @@ Try<MasterDetector*> MasterDetector::create(const string& master)
     : UPID("master@" + master);
 
   if (!pid) {
-    return Error("Failed to parse '" + master + "'");
+    return Error("MasterDetector::create, Failed to parse '" + master + "'");
   }
 
   return new StandaloneMasterDetector(protobuf::createMasterInfo(pid));

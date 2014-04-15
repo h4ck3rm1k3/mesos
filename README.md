@@ -21,6 +21,19 @@ version can be found on the Mesos website's [Documentation](http://mesos.apache.
 
 Instructions are included on the [Getting Started](http://mesos.apache.org/gettingstarted/) page.
 
+Libraries neede are libz, libcurl, and libsasl2.
+
+On Debian, you will want to install these packages to build:
+
+    apt-get install  build-essential openjdk-6-jdk libsasl2-dev python-dev libcurl4-nss-dev
+    autoconf automake git make libssl-dev libsasl autoconf libtool
+
+Then run
+
+    ./bootstrap
+    ./configure
+    make
+
 # License
 
 Apache Mesos is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).

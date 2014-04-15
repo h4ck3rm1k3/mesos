@@ -94,7 +94,7 @@ Try<MasterContender*> MasterContender::create(const string& zk)
     return create(strings::trim(read.get()));
   }
 
-  return Error("Failed to parse '" + zk + "'");
+  return Error("MasterContender::create (contender) failed to parse '" + zk + "'");
 }
 
 

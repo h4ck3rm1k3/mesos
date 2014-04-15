@@ -526,7 +526,7 @@ JNIEXPORT void JNICALL Java_org_apache_mesos_Log_initialize__ILjava_lang_String_
     jstring js = (jstring) env->CallObjectMethod(jiterator, next);
     std::string s = construct<std::string>(env, js);
     UPID pid(s);
-    CHECK(pid) << "Failed to parse '" << s << "'";
+    CHECK(pid) << "org.apache.mesos.Log.initialize Failed to parse '" << s << "'";
     pids.insert(pid);
   }
 

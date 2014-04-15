@@ -1041,7 +1041,7 @@ Try<set<pid_t> > tasks(
 
     if (ss.fail()) {
       if (!ss.eof()) {
-        return Error("Failed to parse '" + value.get() + "'");
+        return Error("Tasks Failed to parse '" + value.get() + "'");
       }
     } else {
       pids.insert(pid);
