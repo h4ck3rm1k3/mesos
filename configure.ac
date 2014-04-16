@@ -152,6 +152,22 @@ AC_ARG_WITH([cxx11],
                            [builds Mesos without C++11 support (deprecated)]),
             [], [with_cxx11=yes])
 
+
+AC_ARG_ENABLE(gprof,
+            AS_HELP_STRING([--enable-gprof=@<:@no/yes@:>@],
+            [build with support for gprof]),,
+            [enable_gprof=no])
+if test "x$enable_gprof" != "xno" ; then
+    CFLAGS="$CFLAGS -pg"
+    CXXFLAGS="$CXXFLAGS -pg"
+    LDFLAGS="$LDFLAGS -pg"
+fi
+
+AC_SUBST(CXXFLAGS)
+AC_SUBST(CFLAGS)
+AC_SUBST(LDFLAGS)
+
+
 # TODO(benh): Support --without-included-protobuf,
 # --without-included-glog, etc. Doing this for protobuf is
 # considerably more tricky because we need to make sure that 'protoc'
