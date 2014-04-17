@@ -158,14 +158,16 @@ AC_ARG_ENABLE(gprof,
             [build with support for gprof]),,
             [enable_gprof=no])
 if test "x$enable_gprof" != "xno" ; then
-    CFLAGS="$CFLAGS -pg"
-    CXXFLAGS="$CXXFLAGS -pg"
-    LDFLAGS="$LDFLAGS -pg"
-fi
+    CFLAGS="$CFLAGS -pg --coverage"
+    CXXFLAGS="$CXXFLAGS -pg --coverage"
+    LDFLAGS="$LDFLAGS -pg --coverage -lgcov"
 
 AC_SUBST(CXXFLAGS)
 AC_SUBST(CFLAGS)
 AC_SUBST(LDFLAGS)
+
+fi
+
 
 
 # TODO(benh): Support --without-included-protobuf,
