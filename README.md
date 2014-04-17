@@ -48,6 +48,7 @@ Running gprof will show you the stats, but do that to the libtool binary
     gprof ./.libs/mesos-tests
 
 It will show you the top functions where time is spent, for example :
+```
   %   cumulative   self              self     total  
  time   seconds   seconds    calls  ms/call  ms/call  name    
  14.10      0.11     0.11   260182     0.00     0.00  boost::uuids::detail::sha1::process_block()
@@ -58,7 +59,8 @@ It will show you the top functions where time is spent, for example :
   3.85      0.34     0.03    84876     0.00     0.00  os::process(int)
   2.56      0.36     0.02   170519     0.00     0.00  Try<Duration>::get() const
   2.56      0.38     0.02    85252     0.00     0.00  proc::status(int)
-  
+```
+
 # Installation
 
 Instructions are included on the [Getting Started](http://mesos.apache.org/gettingstarted/) page.
