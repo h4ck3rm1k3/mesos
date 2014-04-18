@@ -34,13 +34,13 @@ include versions.am
 
 DISTRIBUTE = distribute-$(DISTRIBUTE_VERSION)
 LEVELDB = leveldb
-ZOOKEEPER = zookeeper-$(ZOOKEEPER_VERSION)
+ZOOKEEPER = zookeeper
 
 
 EXTRA_DIST =		\
   $(DISTRIBUTE).tar.gz	\
-  $(LEVELDB).tar.gz	\
-  $(ZOOKEEPER).tar.gz
+  $(LEVELDB).tar.gz	
+
 
 CLEAN_EXTRACTED =	\
   $(DISTRIBUTE)		\
@@ -72,7 +72,7 @@ $(LEVELDB)/libleveldb.a: $(LEVELDB)-stamp
 	cd $(LEVELDB) && \
           $(MAKE) $(AM_MAKEFLAGS) CC="$(CC)" CXX="$(CXX)" OPT="$(CXXFLAGS) -fPIC"
 
-$(ZOOKEEPER)/src/c/libzookeeper_mt.la: $(ZOOKEEPER)-stamp
+$(ZOOKEEPER)/src/c/libzookeeper_mt.la: 
 	cd $(ZOOKEEPER)/src/c && ./configure $(CONFIGURE_ARGS) && \
           $(MAKE) $(AM_MAKEFLAGS)
 
@@ -88,7 +88,6 @@ if WITH_INCLUDED_ZOOKEEPER
 else
   # Now matter what we need to extract ZooKeeper so that we can run
   # 'make check' (some of our tests need the ZooKeeper JAR).
-  ALL_LOCAL += $(ZOOKEEPER)-stamp
 endif
 
 all-local: $(ALL_LOCAL)

@@ -1,0 +1,3 @@
+[submodule "3rdparty/zookeeper"]
+	path = 3rdparty/zookeeper
+	url = git@github.com:h4ck3rm1k3/zookeeper.git
