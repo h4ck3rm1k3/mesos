@@ -1,4 +1,5 @@
-//
+#pragma once
+
 namespace flags {
   class FlagsBase {
   protected :

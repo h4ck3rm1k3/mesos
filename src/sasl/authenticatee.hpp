@@ -31,6 +31,7 @@
 #include <process/protobuf.hpp>
 
 #include <stout/strings.hpp>
+#include <glog/logging.h>
 
 #include "messages/messages.hpp"
 
@@ -68,7 +69,7 @@ class AuthenticateeProcess : public ProtobufProcess<AuthenticateeProcess>
 public:
   AuthenticateeProcess(const Credential& _credential,
                        const process::UPID& _client)
-    : ProcessBase(process::ID::generate("authenticatee")),
+    : ProtobufProcess<AuthenticateeProcess>(process::ID::generate("authenticatee")),
       credential(_credential),
       client(_client),
       status(READY),

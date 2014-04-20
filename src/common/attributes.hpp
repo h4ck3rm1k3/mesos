@@ -72,7 +72,7 @@ public:
       return false;
     }
 
-    foreach (const Attribute& attribute, attributes) {
+    foreach (Attribute, const Attribute& attribute, attributes) {
       Option<Attribute> maybeAttribute = that.get(attribute);
       if (maybeAttribute.isNone()) {
         return false;
@@ -131,7 +131,7 @@ public:
 
   const Option<Attribute> get(const Attribute& thatAttribute) const
   {
-    foreach (const Attribute& attribute, attributes) {
+    foreach (Attribute, const Attribute& attribute, attributes) {
       if (attribute.name() == thatAttribute.name() &&
           attribute.type() == thatAttribute.type()) {
         return attribute;
@@ -192,7 +192,7 @@ inline Value::Scalar Attributes::get(
     const std::string& name,
     const Value::Scalar& scalar) const
 {
-  foreach (const Attribute& attribute, attributes) {
+  foreach (Attribute, const Attribute& attribute, attributes) {
     if (attribute.name() == name &&
         attribute.type() == Value::SCALAR) {
       return attribute.scalar();
@@ -208,7 +208,7 @@ inline Value::Ranges Attributes::get(
     const std::string& name,
     const Value::Ranges& ranges) const
 {
-  foreach (const Attribute& attribute, attributes) {
+  foreach (Attribute, const Attribute& attribute, attributes) {
     if (attribute.name() == name &&
         attribute.type() == Value::RANGES) {
       return attribute.ranges();
@@ -224,7 +224,7 @@ inline Value::Text Attributes::get(
     const std::string& name,
     const Value::Text& text) const
 {
-  foreach (const Attribute& attribute, attributes) {
+  foreach (Attribute, const Attribute& attribute, attributes) {
     if (attribute.name() == name &&
         attribute.type() == Value::TEXT) {
       return attribute.text();

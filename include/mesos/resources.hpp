@@ -31,7 +31,7 @@
 #include <stout/foreach.hpp>
 #include <stout/none.hpp>
 #include <stout/option.hpp>
-
+#include <google/protobuf/repeated_field.h>
 
 /**
  * Resources come in three types: scalar, ranges, and sets. These are
@@ -105,7 +105,7 @@ public:
   {
     Resources result;
 
-    foreach (const Resource& resource, resources) {
+    foreach (Resource,const Resource& resource, resources) {
       if (isAllocatable(resource)) {
         result.resources.Add()->MergeFrom(resource);
       }
@@ -134,7 +134,7 @@ public:
       return false;
     }
 
-    foreach (const Resource& resource, resources) {
+    foreach (Resource,const Resource& resource, resources) {
       Option<Resource> option = that.get(resource);
       if (option.isNone()) {
         return false;
@@ -155,7 +155,7 @@ public:
 
   bool operator <= (const Resources& that) const
   {
-    foreach (const Resource& resource, resources) {
+    foreach (Resource, const Resource& resource, resources) {
       Option<Resource> option = that.get(resource);
       if (option.isNone()) {
         return false;
@@ -173,7 +173,7 @@ public:
   {
     Resources result(*this);
 
-    foreach (const Resource& resource, that.resources) {
+    foreach (Resource,const Resource& resource, that.resources) {
       result += resource;
     }
 
@@ -184,7 +184,7 @@ public:
   {
     Resources result(*this);
 
-    foreach (const Resource& resource, that.resources) {
+    foreach (Resource,const Resource& resource, that.resources) {
       result -= resource;
     }
 
@@ -193,7 +193,7 @@ public:
 
   Resources& operator += (const Resources& that)
   {
-    foreach (const Resource& resource, that.resources) {
+    foreach (Resource,const Resource& resource, that.resources) {
       *this += resource;
     }
 
@@ -202,7 +202,7 @@ public:
 
   Resources& operator -= (const Resources& that)
   {
-    foreach (const Resource& resource, that.resources) {
+    foreach (Resource, const Resource& resource, that.resources) {
       *this -= resource;
     }
 
@@ -215,7 +215,7 @@ public:
 
     bool added = false;
 
-    foreach (const Resource& resource, resources) {
+    foreach (Resource,const Resource& resource, resources) {
       if (matches(resource, that)) {
         result.resources.Add()->MergeFrom(resource + that);
         added = true;
@@ -235,7 +235,7 @@ public:
   {
     Resources result;
 
-    foreach (const Resource& resource, resources) {
+    foreach (Resource, const Resource& resource, resources) {
       if (matches(resource, that)) {
         Resource r = resource - that;
         if (!isZero(r)) {
@@ -367,7 +367,7 @@ inline Value::Scalar Resources::get(
   Value::Scalar total;
   bool found = false;
 
-  foreach (const Resource& resource, resources) {
+  foreach (Resource, const Resource& resource, resources) {
     if (resource.name() == name &&
         resource.type() == Value::SCALAR) {
       total += resource.scalar();
@@ -391,7 +391,7 @@ inline Value::Ranges Resources::get(
   Value::Ranges total;
   bool found = false;
 
-  foreach (const Resource& resource, resources) {
+  foreach (Resource, const Resource& resource, resources) {
     if (resource.name() == name &&
         resource.type() == Value::RANGES) {
       total += resource.ranges();
@@ -415,7 +415,7 @@ inline Value::Set Resources::get(
   Value::Set total;
   bool found = false;
 
-  foreach (const Resource& resource, resources) {
+  foreach (Resource, const Resource& resource, resources) {
     if (resource.name() == name &&
         resource.type() == Value::SET) {
       total += resource.set();

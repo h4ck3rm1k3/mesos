@@ -793,7 +793,7 @@ protected:
 
     ResourceRequestMessage message;
     message.mutable_framework_id()->MergeFrom(framework.id());
-    foreach (const Request& request, requests) {
+    foreach (Request, const Request& request, requests) {
       message.add_requests()->MergeFrom(request);
     }
     CHECK_SOME(master);
@@ -814,7 +814,7 @@ protected:
       // scheduler process sends it but the master never receives it
       // (message lost, master failover etc).  In the future, this
       // should be solved by the replicated log and timeouts.
-      foreach (const TaskInfo& task, tasks) {
+      foreach (TaskInfo,const TaskInfo& task, tasks) {
         StatusUpdate update;
         update.mutable_framework_id()->MergeFrom(framework.id());
         TaskStatus* status = update.mutable_status();
@@ -831,7 +831,7 @@ protected:
 
     vector<TaskInfo> result;
 
-    foreach (const TaskInfo& task, tasks) {
+    foreach (TaskInfo,const TaskInfo& task, tasks) {
       // Check that each TaskInfo has either an ExecutorInfo or a
       // CommandInfo but not both.
       if (task.has_executor() == task.has_command()) {
@@ -884,10 +884,10 @@ protected:
     message.mutable_framework_id()->MergeFrom(framework.id());
     message.mutable_filters()->MergeFrom(filters);
 
-    foreach (const OfferID& offerId, offerIds) {
+    foreach (OfferID, const OfferID& offerId, offerIds) {
       message.add_offer_ids()->MergeFrom(offerId);
 
-      foreach (const TaskInfo& task, result) {
+      foreach (TaskInfo,const TaskInfo& task, result) {
         // Keep only the slave PIDs where we run tasks so we can send
         // framework messages directly.
         if (savedOffers.count(offerId) > 0) {
@@ -915,7 +915,7 @@ protected:
       message.mutable_offer_id()->MergeFrom(offerIds[0]);
     }
 
-    foreach (const TaskInfo& task, result) {
+    foreach (TaskInfo,const TaskInfo& task, result) {
       message.add_tasks()->MergeFrom(task);
     }
 
@@ -988,7 +988,7 @@ protected:
     ReconcileTasksMessage message;
     message.mutable_framework_id()->MergeFrom(framework.id());
 
-    foreach (const TaskStatus& status, statuses) {
+    foreach (TaskStatus,const TaskStatus& status, statuses) {
       message.add_statuses()->MergeFrom(status);
     }
 
