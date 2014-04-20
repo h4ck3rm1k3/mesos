@@ -15,6 +15,7 @@ template <class T> std::ostream LOG(T);
 
 enum levels {
   INFO,
+  FATAL
 };
 
 

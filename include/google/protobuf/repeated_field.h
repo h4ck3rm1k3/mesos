@@ -28,6 +28,8 @@ namespace google {
       template <class U> void MergeFrom(U);
       void Clear();
       RepeatedPtrField<T> * Add();
+
+      T Get(int &) const;
       size_t size() const;
     };
   }
