@@ -19,8 +19,8 @@
 # master/http.cpp and slave/http.cpp.
 AUTOMAKE_OPTIONS = subdir-objects
 
-include ../3rdparty/versions.am
-include ../3rdparty/libprocess/3rdparty/versions.am
+#include ../3rdparty/versions.am
+#include ../3rdparty/libprocess/3rdparty/versions.am
 
 # TODO(charles): Move these into an included automakefile and have
 # them include $(top_builddir) as appropriate.
@@ -45,7 +45,7 @@ pkglibexecdir = $(libexecdir)/$(PACKAGE)
 pkglocalstatedir = $(localstatedir)/$(PACKAGE)
 
 # Protocol buffer compiler.
-PROTOC = ../$(PROTOBUF)/src/protoc
+PROTOC = protoc-c
 PROTOCFLAGS = -I$(top_srcdir)/include/mesos -I$(srcdir)
 
 # Initialize variables here so we can use += operator everywhere else.
@@ -131,21 +131,21 @@ BUILT_SOURCES += $(REGISTRY_PROTOS)
 CLEANFILES += $(REGISTRY_PROTOS)
 
 # Targets for generating protocol buffer code.
-%.pb.cc %.pb.h: $(top_srcdir)/include/mesos/%.proto
-	$(MKDIR_P) $(@D)
-	$(PROTOC) $(PROTOCFLAGS) --cpp_out=. $^
+# %.pb.cc %.pb.h: $(top_srcdir)/include/mesos/%.proto
+# 	$(MKDIR_P) $(@D)
+# 	$(PROTOC) $(PROTOCFLAGS) --cpp_out=. $^
 
-%.pb.cc %.pb.h: %.proto
-	$(MKDIR_P) $(@D)
-	$(PROTOC) $(PROTOCFLAGS) --cpp_out=. $^
+# %.pb.cc %.pb.h: %.proto
+# 	$(MKDIR_P) $(@D)
+# 	$(PROTOC) $(PROTOCFLAGS) --cpp_out=. $^
 
-$(JAVA_PROTOS): $(MESOS_PROTO)
-	$(MKDIR_P)  $(@D)
-	$(PROTOC) $(PROTOCFLAGS) --java_out=java/generated $^
+# $(JAVA_PROTOS): $(MESOS_PROTO)
+# 	$(MKDIR_P)  $(@D)
+# 	$(PROTOC) $(PROTOCFLAGS) --java_out=java/generated $^
 
-$(PYTHON_PROTOS): $(MESOS_PROTO)
-	$(MKDIR_P) $(@D)
-	$(PROTOC) $(PROTOCFLAGS) --python_out=python/src $^
+# $(PYTHON_PROTOS): $(MESOS_PROTO)
+# 	$(MKDIR_P) $(@D)
+# 	$(PROTOC) $(PROTOCFLAGS) --python_out=python/src $^
 
 # We even use a convenience library for most of Mesos so that we can
 # exclude third party libraries so setuptools/distribute can build a

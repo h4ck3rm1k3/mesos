@@ -24,7 +24,7 @@
 
 BUILT_SOURCES = # Initialized to enable using +=.
 
-SUBDIRS = libprocess
+SUBDIRS = 
 
 # We need to add '--srcdir=.' needed because 'make distcheck' adds
 #  '--srcdir=...' when configuring.
@@ -34,7 +34,7 @@ include versions.am
 
 DISTRIBUTE = distribute-$(DISTRIBUTE_VERSION)
 LEVELDB = leveldb
-ZOOKEEPER = zookeeper
+#ZOOKEEPER = zookeeper
 
 
 EXTRA_DIST =		\
@@ -44,8 +44,7 @@ EXTRA_DIST =		\
 
 CLEAN_EXTRACTED =	\
   $(DISTRIBUTE)		\
-  $(LEVELDB)		\
-  $(ZOOKEEPER)
+  $(LEVELDB)		
 
 
 # This is where the magic happens: we use stamp files as dependencies
@@ -72,9 +71,9 @@ $(LEVELDB)/libleveldb.a: $(LEVELDB)-stamp
 	cd $(LEVELDB) && \
           $(MAKE) $(AM_MAKEFLAGS) CC="$(CC)" CXX="$(CXX)" OPT="$(CXXFLAGS) -fPIC"
 
-$(ZOOKEEPER)/src/c/libzookeeper_mt.la: 
-	cd $(ZOOKEEPER)/src/c && ./configure $(CONFIGURE_ARGS) && \
-          $(MAKE) $(AM_MAKEFLAGS)
+# $(ZOOKEEPER)/src/c/libzookeeper_mt.la: 
+# 	cd $(ZOOKEEPER)/src/c && ./configure $(CONFIGURE_ARGS) && \
+#           $(MAKE) $(AM_MAKEFLAGS)
 
 # Dependencies for all-local.
 ALL_LOCAL = $(LEVELDB)/libleveldb.a
@@ -83,12 +82,12 @@ if HAS_PYTHON
   ALL_LOCAL += $(DISTRIBUTE_EGG)
 endif
 
-if WITH_INCLUDED_ZOOKEEPER
-  ALL_LOCAL += $(ZOOKEEPER)/src/c/libzookeeper_mt.la
-else
-  # Now matter what we need to extract ZooKeeper so that we can run
-  # 'make check' (some of our tests need the ZooKeeper JAR).
-endif
+# if WITH_INCLUDED_ZOOKEEPER
+#   ALL_LOCAL += $(ZOOKEEPER)/src/c/libzookeeper_mt.la
+# else
+#   # Now matter what we need to extract ZooKeeper so that we can run
+#   # 'make check' (some of our tests need the ZooKeeper JAR).
+# endif
 
 all-local: $(ALL_LOCAL)
 

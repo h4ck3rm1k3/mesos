@@ -61,7 +61,7 @@ endif
 # (requires Automake >= 1.13) to define 'bench' as a recursive target
 # when we have benchmark tests in multiple subdirs.
 bench: all
-	@cd 3rdparty/libprocess/3rdparty && $(MAKE) $(AM_MAKEFLAGS) libgmock.la
+#@cd 3rdparty/libprocess/3rdparty && $(MAKE) $(AM_MAKEFLAGS) libgmock.la
 	@cd src && MESOS_BENCHMARK=1 $(MAKE) $(AM_MAKEFLAGS) check
 
 PHONY_TARGETS += bench
