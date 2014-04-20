@@ -45,7 +45,7 @@ pkglibexecdir = $(libexecdir)/$(PACKAGE)
 pkglocalstatedir = $(localstatedir)/$(PACKAGE)
 
 # Protocol buffer compiler.
-PROTOC = protoc-c
+#PROTOC = protoc-c
 PROTOCFLAGS = -I$(top_srcdir)/include/mesos -I$(srcdir)
 
 # Initialize variables here so we can use += operator everywhere else.
@@ -580,153 +580,153 @@ EXTRA_DIST += $(EXAMPLES_SOURCE)
 
 if HAS_JAVA
 # Protocol buffers JAR.
-PROTOBUF_JAR = ../protobuf-$(PROTOBUF_VERSION).jar
+# #PROTOBUF_JAR = ../protobuf-$(PROTOBUF_VERSION).jar
 
-# TODO(charles): Move into 3rdparty/Makefile.am.
-$(PROTOBUF_JAR): # TODO(charles): Specify dependencies for the jar.
-	@echo "Building protobuf-$(PROTOBUF_VERSION).jar ..."
-	$(MKDIR_P) ../$(PROTOBUF)/java/src/main/java
-	$(PROTOC) --java_out=../$(PROTOBUF)/java/src/main/java		\
-          -I../$(PROTOBUF)/src						\
-          ../$(PROTOBUF)/src/google/protobuf/descriptor.proto
-	$(JAVA_HOME)/bin/javac -source 1.6 -target 1.6			\
-          -d ../$(PROTOBUF)/java/src/main/java				\
-          ../$(PROTOBUF)/java/src/main/java/com/google/protobuf/*.java	\
-          ../$(PROTOBUF)/java/src/main/java/com/google/protobuf/*.java
-	$(JAVA_HOME)/bin/jar cf $@ -C ../$(PROTOBUF)/java/src/main/java com
+# # TODO(charles): Move into 3rdparty/Makefile.am.
+# # $(PROTOBUF_JAR): # TODO(charles): Specify dependencies for the jar.
+# # 	@echo "Building protobuf-$(PROTOBUF_VERSION).jar ..."
+# # 	$(MKDIR_P) ../$(PROTOBUF)/java/src/main/java
+# # 	$(PROTOC) --java_out=../$(PROTOBUF)/java/src/main/java		\
+# #           -I../$(PROTOBUF)/src						\
+# #           ../$(PROTOBUF)/src/google/protobuf/descriptor.proto
+# # 	$(JAVA_HOME)/bin/javac -source 1.6 -target 1.6			\
+# #           -d ../$(PROTOBUF)/java/src/main/java				\
+# #           ../$(PROTOBUF)/java/src/main/java/com/google/protobuf/*.java	\
+# #           ../$(PROTOBUF)/java/src/main/java/com/google/protobuf/*.java
+# # 	$(JAVA_HOME)/bin/jar cf $@ -C ../$(PROTOBUF)/java/src/main/java com
 
-CLEANFILES += $(PROTOBUF_JAR)
-
-
-$(MESOS_JAR): $(MESOS_JAR_SOURCE) $(MESOS_JAR_GENERATED) $(PROTOBUF_JAR)
-	@echo "Building mesos-$(PACKAGE_VERSION).jar ..."
-	-rm -rf java/classes/org/apache/mesos
-	$(MKDIR_P) java/classes/org/apache/mesos
-	$(JAVA_HOME)/bin/javac -source 1.6 -target 1.6			\
-          -cp $(PROTOBUF_JAR)						\
-          -d java/classes $(MESOS_JAR_SOURCE) $(MESOS_JAR_GENERATED)
-	$(JAVA_HOME)/bin/jar cf $@ -C java/classes org
-
-CLEANFILES += $(MESOS_JAR)
+# CLEANFILES += $(PROTOBUF_JAR)
 
 
-MESOS_SOURCES_JAR = ../src/mesos-$(PACKAGE_VERSION)-sources.jar
+# $(MESOS_JAR): $(MESOS_JAR_SOURCE) $(MESOS_JAR_GENERATED) $(PROTOBUF_JAR)
+# 	@echo "Building mesos-$(PACKAGE_VERSION).jar ..."
+# 	-rm -rf java/classes/org/apache/mesos
+# 	$(MKDIR_P) java/classes/org/apache/mesos
+# 	$(JAVA_HOME)/bin/javac -source 1.6 -target 1.6			\
+#           -cp $(PROTOBUF_JAR)						\
+#           -d java/classes $(MESOS_JAR_SOURCE) $(MESOS_JAR_GENERATED)
+# 	$(JAVA_HOME)/bin/jar cf $@ -C java/classes org
 
-$(MESOS_SOURCES_JAR): $(MESOS_JAR_SOURCE)
-	-rm -f $(MESOS_SOURCES_JAR)
-	$(JAVA_HOME)/bin/jar cf $@ -C $(srcdir)/java/src org
-	$(JAVA_HOME)/bin/jar uf $@ -C java/generated org
-
-CLEANFILES += $(MESOS_SOURCES_JAR)
+# CLEANFILES += $(MESOS_JAR)
 
 
-# Convenience library for JNI bindings.
-# TODO(Charles Reiss): We really should be building the Java library
-# with -module, which means it should be a different library than the
-# main libmesos.so.
-noinst_LTLIBRARIES += libjava.la
+# MESOS_SOURCES_JAR = ../src/mesos-$(PACKAGE_VERSION)-sources.jar
 
-libjava_la_SOURCES =							\
-	java/jni/convert.cpp						\
-	java/jni/convert.hpp						\
-	java/jni/construct.cpp						\
-	java/jni/construct.hpp						\
-	java/jni/org_apache_mesos_Log.cpp				\
-	java/jni/org_apache_mesos_MesosSchedulerDriver.cpp		\
-	java/jni/org_apache_mesos_MesosExecutorDriver.cpp		\
-	java/jni/org_apache_mesos_state_AbstractState.cpp		\
-	java/jni/org_apache_mesos_state_LevelDBState.cpp		\
-	java/jni/org_apache_mesos_state_Variable.cpp			\
-	java/jni/org_apache_mesos_state_ZooKeeperState.cpp		\
-	jvm/jvm.cpp							\
-	jvm/jvm.hpp							\
-	jvm/java/io.hpp							\
-	jvm/java/lang.hpp						\
-	jvm/java/net.hpp						\
-	jvm/org/apache/log4j.cpp					\
-	jvm/org/apache/log4j.hpp					\
-	jvm/org/apache/zookeeper.cpp					\
-	jvm/org/apache/zookeeper.hpp
+# $(MESOS_SOURCES_JAR): $(MESOS_JAR_SOURCE)
+# 	-rm -f $(MESOS_SOURCES_JAR)
+# 	$(JAVA_HOME)/bin/jar cf $@ -C $(srcdir)/java/src org
+# 	$(JAVA_HOME)/bin/jar uf $@ -C java/generated org
 
-libjava_la_CPPFLAGS = $(MESOS_CPPFLAGS)
-libjava_la_CPPFLAGS += $(JAVA_CPPFLAGS)
-libjava_la_CPPFLAGS += -I$(srcdir)/java/jni -Ijava/jni
+# CLEANFILES += $(MESOS_SOURCES_JAR)
 
-libjava_la_DEPENDENCIES = $(MESOS_PROTO)
 
-libjava_la_LIBADD = $(JAVA_LDFLAGS)
+# # Convenience library for JNI bindings.
+# # TODO(Charles Reiss): We really should be building the Java library
+# # with -module, which means it should be a different library than the
+# # main libmesos.so.
+# noinst_LTLIBRARIES += libjava.la
 
-# We don't add libjava.la to libmesos_no_3rdparty.la so we don't
-# include the JNI bindings in the Python egg (but we might want to
-# reconsider this in the future). We also need to add the JAVA_LDFLAGS
-# to libmesos.la so on Linux we set the rpath for libmesos.so.
-libmesos_la_LIBADD += libjava.la
-libmesos_la_LIBADD += $(JAVA_LDFLAGS)
+# libjava_la_SOURCES =							\
+# 	java/jni/convert.cpp						\
+# 	java/jni/convert.hpp						\
+# 	java/jni/construct.cpp						\
+# 	java/jni/construct.hpp						\
+# 	java/jni/org_apache_mesos_Log.cpp				\
+# 	java/jni/org_apache_mesos_MesosSchedulerDriver.cpp		\
+# 	java/jni/org_apache_mesos_MesosExecutorDriver.cpp		\
+# 	java/jni/org_apache_mesos_state_AbstractState.cpp		\
+# 	java/jni/org_apache_mesos_state_LevelDBState.cpp		\
+# 	java/jni/org_apache_mesos_state_Variable.cpp			\
+# 	java/jni/org_apache_mesos_state_ZooKeeperState.cpp		\
+# 	jvm/jvm.cpp							\
+# 	jvm/jvm.hpp							\
+# 	jvm/java/io.hpp							\
+# 	jvm/java/lang.hpp						\
+# 	jvm/java/net.hpp						\
+# 	jvm/org/apache/log4j.cpp					\
+# 	jvm/org/apache/log4j.hpp					\
+# 	jvm/org/apache/zookeeper.cpp					\
+# 	jvm/org/apache/zookeeper.hpp
 
-# We need to generate the JNI header files before we build the sources
-# and the easiest way to do that with autotools is with the
-# BUILT_SOURCES mechanism. The downside of this is that a user cannot
-# run 'make libjava.la' (or any target that uses BUILT_SOURCES) but
-# that should not matter as libjava.la is just a convenience library
-# and should not get exposed.
+# libjava_la_CPPFLAGS = $(MESOS_CPPFLAGS)
+# libjava_la_CPPFLAGS += $(JAVA_CPPFLAGS)
+# libjava_la_CPPFLAGS += -I$(srcdir)/java/jni -Ijava/jni
 
-nodist_libjava_la_SOURCES =						\
-	java/jni/org_apache_mesos_MesosSchedulerDriver.h		\
-	java/jni/org_apache_mesos_MesosExecutorDriver.h			\
-	java/jni/org_apache_mesos_Log.h					\
-	java/jni/org_apache_mesos_state_AbstractState.h			\
-	java/jni/org_apache_mesos_state_LevelDBState.h			\
-	java/jni/org_apache_mesos_state_Variable.h			\
-	java/jni/org_apache_mesos_state_ZooKeeperState.h
+# libjava_la_DEPENDENCIES = $(MESOS_PROTO)
 
-BUILT_SOURCES += $(nodist_libjava_la_SOURCES)
+# libjava_la_LIBADD = $(JAVA_LDFLAGS)
 
-java/jni/org_apache_mesos_MesosSchedulerDriver.h: $(MESOS_JAR)
-	$(JAVA_HOME)/bin/javah -d java/jni -classpath			\
-          $(PROTOBUF_JAR):java/classes					\
-          org.apache.mesos.MesosSchedulerDriver
+# # We don't add libjava.la to libmesos_no_3rdparty.la so we don't
+# # include the JNI bindings in the Python egg (but we might want to
+# # reconsider this in the future). We also need to add the JAVA_LDFLAGS
+# # to libmesos.la so on Linux we set the rpath for libmesos.so.
+# libmesos_la_LIBADD += libjava.la
+# libmesos_la_LIBADD += $(JAVA_LDFLAGS)
 
-java/jni/org_apache_mesos_MesosExecutorDriver.h: $(MESOS_JAR)
-	$(JAVA_HOME)/bin/javah -d java/jni -classpath			\
-          $(PROTOBUF_JAR):java/classes					\
-          org.apache.mesos.MesosExecutorDriver
+# # We need to generate the JNI header files before we build the sources
+# # and the easiest way to do that with autotools is with the
+# # BUILT_SOURCES mechanism. The downside of this is that a user cannot
+# # run 'make libjava.la' (or any target that uses BUILT_SOURCES) but
+# # that should not matter as libjava.la is just a convenience library
+# # and should not get exposed.
 
-java/jni/org_apache_mesos_Log.h: $(MESOS_JAR)
-	$(JAVA_HOME)/bin/javah -d java/jni -classpath			\
-          $(PROTOBUF_JAR):java/classes org.apache.mesos.Log
+# nodist_libjava_la_SOURCES =						\
+# 	java/jni/org_apache_mesos_MesosSchedulerDriver.h		\
+# 	java/jni/org_apache_mesos_MesosExecutorDriver.h			\
+# 	java/jni/org_apache_mesos_Log.h					\
+# 	java/jni/org_apache_mesos_state_AbstractState.h			\
+# 	java/jni/org_apache_mesos_state_LevelDBState.h			\
+# 	java/jni/org_apache_mesos_state_Variable.h			\
+# 	java/jni/org_apache_mesos_state_ZooKeeperState.h
 
-java/jni/org_apache_mesos_state_AbstractState.h: $(MESOS_JAR)
-	$(JAVA_HOME)/bin/javah -d java/jni -classpath		\
-          $(PROTOBUF_JAR):java/classes org.apache.mesos.state.AbstractState
+# BUILT_SOURCES += $(nodist_libjava_la_SOURCES)
 
-java/jni/org_apache_mesos_state_LevelDBState.h: $(MESOS_JAR)
-	$(JAVA_HOME)/bin/javah -d java/jni -classpath		\
-          $(PROTOBUF_JAR):java/classes org.apache.mesos.state.LevelDBState
+# java/jni/org_apache_mesos_MesosSchedulerDriver.h: $(MESOS_JAR)
+# 	$(JAVA_HOME)/bin/javah -d java/jni -classpath			\
+#           $(PROTOBUF_JAR):java/classes					\
+#           org.apache.mesos.MesosSchedulerDriver
 
-java/jni/org_apache_mesos_state_Variable.h: $(MESOS_JAR)
-	$(JAVA_HOME)/bin/javah -d java/jni -classpath			\
-          $(PROTOBUF_JAR):java/classes org.apache.mesos.state.Variable
+# java/jni/org_apache_mesos_MesosExecutorDriver.h: $(MESOS_JAR)
+# 	$(JAVA_HOME)/bin/javah -d java/jni -classpath			\
+#           $(PROTOBUF_JAR):java/classes					\
+#           org.apache.mesos.MesosExecutorDriver
 
-java/jni/org_apache_mesos_state_ZooKeeperState.h: $(MESOS_JAR)
-	$(JAVA_HOME)/bin/javah -d java/jni -classpath			\
-          $(PROTOBUF_JAR):java/classes org.apache.mesos.state.ZooKeeperState
+# java/jni/org_apache_mesos_Log.h: $(MESOS_JAR)
+# 	$(JAVA_HOME)/bin/javah -d java/jni -classpath			\
+#           $(PROTOBUF_JAR):java/classes org.apache.mesos.Log
 
-$(EXAMPLES_JAR): $(EXAMPLES_SOURCE)
-	@echo "Building examples.jar ..."
-	$(MKDIR_P) examples/java
-	$(JAVA_HOME)/bin/javac -source 1.6 -target 1.6			\
-          -cp ../$(ZOOKEEPER_JAR):$(PROTOBUF_JAR):$(MESOS_JAR):$(srcdir)/examples/java	\
-          -sourcepath $(srcdir)/examples/java -d examples/java	        \
-          $(srcdir)/examples/java/*.java
-	$(JAVA_HOME)/bin/jar cf $@ -C examples/java .
+# java/jni/org_apache_mesos_state_AbstractState.h: $(MESOS_JAR)
+# 	$(JAVA_HOME)/bin/javah -d java/jni -classpath		\
+#           $(PROTOBUF_JAR):java/classes org.apache.mesos.state.AbstractState
 
-CLEANFILES += $(EXAMPLES_JAR)
+# java/jni/org_apache_mesos_state_LevelDBState.h: $(MESOS_JAR)
+# 	$(JAVA_HOME)/bin/javah -d java/jni -classpath		\
+#           $(PROTOBUF_JAR):java/classes org.apache.mesos.state.LevelDBState
 
-maven-install: $(MESOS_JAR) $(MESOS_SOURCES_JAR) java/mesos.pom
-	mvn install:install-file -Dfile=$(MESOS_JAR)			\
-          -Dsources=$(MESOS_SOURCES_JAR) -DpomFile=java/mesos.pom
+# java/jni/org_apache_mesos_state_Variable.h: $(MESOS_JAR)
+# 	$(JAVA_HOME)/bin/javah -d java/jni -classpath			\
+#           $(PROTOBUF_JAR):java/classes org.apache.mesos.state.Variable
 
-PHONY_TARGETS += maven-install
+# java/jni/org_apache_mesos_state_ZooKeeperState.h: $(MESOS_JAR)
+# 	$(JAVA_HOME)/bin/javah -d java/jni -classpath			\
+#           $(PROTOBUF_JAR):java/classes org.apache.mesos.state.ZooKeeperState
+
+# # $(EXAMPLES_JAR): $(EXAMPLES_SOURCE)
+# # 	@echo "Building examples.jar ..."
+# # 	$(MKDIR_P) examples/java
+# # 	$(JAVA_HOME)/bin/javac -source 1.6 -target 1.6			\
+# #           -cp ../$(ZOOKEEPER_JAR):$(PROTOBUF_JAR):$(MESOS_JAR):$(srcdir)/examples/java	\
+# #           -sourcepath $(srcdir)/examples/java -d examples/java	        \
+# #           $(srcdir)/examples/java/*.java
+# # 	$(JAVA_HOME)/bin/jar cf $@ -C examples/java .
+
+# CLEANFILES += $(EXAMPLES_JAR)
+
+# maven-install: $(MESOS_JAR) $(MESOS_SOURCES_JAR) java/mesos.pom
+# 	mvn install:install-file -Dfile=$(MESOS_JAR)			\
+#           -Dsources=$(MESOS_SOURCES_JAR) -DpomFile=java/mesos.pom
+
+# PHONY_TARGETS += maven-install
 endif # HAS_JAVA
 
 # We remove mesos-*.jar here to make sure any older versions of the
