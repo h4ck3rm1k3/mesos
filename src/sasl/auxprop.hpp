@@ -23,6 +23,7 @@
 #include <sasl/saslplug.h>
 
 #include <string>
+#include <list>
 
 #include <stout/foreach.hpp>
 #include <stout/multimap.hpp>
@@ -55,7 +56,7 @@ public:
       const std::string& name)
   {
     if (properties.contains(user)) {
-      foreach (const Property& property, properties.get(user)) {
+      foreach (Property, const Property& property, properties.get(user)) {
         if (property.name == name) {
           return property.values;
         }

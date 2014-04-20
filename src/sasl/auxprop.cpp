@@ -164,7 +164,7 @@ int InMemoryAuxiliaryPropertyPlugin::initialize(
         // the previous 'prop_set' calls which is the behavior we want
         // after adding the first value.
         bool append = false;
-        foreach (const string& value, values.get()) {
+        foreach (string, const string& value, values.get()) {
           sparams->utils->prop_set(
               sparams->propctx,
               append ? NULL : property->name,
