@@ -26,8 +26,8 @@ include ../3rdparty/libprocess/3rdparty/versions.am
 # them include $(top_builddir) as appropriate.
 DISTRIBUTE = 3rdparty/distribute-$(DISTRIBUTE_VERSION)
 LEVELDB = 3rdparty/leveldb
-ZOOKEEPER = 3rdparty/zookeeper-$(ZOOKEEPER_VERSION)/src/c
-ZOOKEEPER_JAR = 3rdparty/zookeeper-$(ZOOKEEPER_VERSION)/zookeeper-$(ZOOKEEPER_VERSION).jar
+ZOOKEEPER = 3rdparty/zookeeper/src/c
+ZOOKEEPER_JAR = 3rdparty/zookeeper/zookeeper.jar
 LIBPROCESS = 3rdparty/libprocess
 STOUT = $(LIBPROCESS)/3rdparty/stout
 BOOST = $(LIBPROCESS)/3rdparty/boost-$(BOOST_VERSION)
@@ -921,7 +921,6 @@ if HAS_JAVA
                          tests/group_tests.cpp				\
                          tests/allocator_zookeeper_tests.cpp
   mesos_tests_CPPFLAGS += $(JAVA_CPPFLAGS)
-  mesos_tests_CPPFLAGS += -DZOOKEEPER_VERSION=\"$(ZOOKEEPER_VERSION)\"
   mesos_tests_LDFLAGS = $(JAVA_LDFLAGS) $(AM_LDFLAGS)
   mesos_tests_DEPENDENCIES += $(EXAMPLES_JAR)
 
