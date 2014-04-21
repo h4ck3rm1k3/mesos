@@ -58,7 +58,7 @@
 
 #include "common/lock.hpp"
 #include "common/type_utils.hpp"
-
+#include "process/process.hpp"
 #include "master/detector.hpp"
 
 #include "local/local.hpp"
@@ -74,7 +74,7 @@ using namespace mesos;
 using namespace mesos::internal;
 using namespace mesos::internal::master;
 
-using namespace process;
+//using namespace process;
 
 using std::map;
 using std::string;
@@ -92,7 +92,7 @@ namespace internal {
 // we allow friend functions to invoke 'send', 'post', etc. Therefore,
 // we must make sure that any necessary synchronization is performed.
 
-class SchedulerProcess : public ProtobufProcess<SchedulerProcess>
+class SchedulerProcess : public ProtobufProcess<mesos::internal::SchedulerProcess>
 {
 public:
   SchedulerProcess(MesosSchedulerDriver* _driver,
@@ -102,7 +102,7 @@ public:
                    MasterDetector* _detector,
                    pthread_mutex_t* _mutex,
                    pthread_cond_t* _cond)
-    : ProcessBase(ID::generate("scheduler")),
+    : ProtobufProcess<mesos::internal::SchedulerProcess>(process::ID::generate("scheduler")),
       driver(_driver),
       scheduler(_scheduler),
       framework(_framework),
@@ -175,7 +175,7 @@ protected:
       .onAny(defer(self(), &SchedulerProcess::detected, lambda::_1));
   }
 
-  void detected(const Future<Option<MasterInfo> >& _master)
+  void detected(const process::Future<Option<MasterInfo> >& _master)
   {
     if (aborted) {
       VLOG(1) << "Ignoring the master change because the driver is aborted!";
@@ -189,7 +189,7 @@ protected:
     }
 
     if (_master.get().isSome()) {
-      master = UPID(_master.get().get().pid());
+      master = process::UPID(_master.get().get().pid());
     } else {
       master = None();
     }
@@ -259,7 +259,7 @@ protected:
       // are here, making the 'discard' here a no-op. This is ok
       // because we set 'reauthenticate' here which enforces a retry
       // in '_authenticate'.
-      Future<bool> authenticating_ = authenticating.get();
+      process::Future<bool> authenticating_ = authenticating.get();
       authenticating_.discard();
       reauthenticate = true;
       return;
@@ -305,7 +305,7 @@ protected:
     authenticatee = NULL;
 
     CHECK_SOME(authenticating);
-    const Future<bool>& future = authenticating.get();
+    const process::Future<bool>& future = authenticating.get();
 
     if (master.isNone()) {
       LOG(INFO) << "Ignoring _authenticate because the master is lost";
@@ -347,7 +347,7 @@ protected:
     doReliableRegistration(); // Proceed with registration.
   }
 
-  void authenticationTimeout(Future<bool> future)
+  void authenticationTimeout(process::Future<bool> future)
   {
     if (aborted) {
       VLOG(1) << "Ignoring authentication timeout because "
@@ -365,7 +365,7 @@ protected:
   }
 
   void registered(
-      const UPID& from,
+      const process::UPID& from,
       const FrameworkID& frameworkId,
       const MasterInfo& masterInfo)
   {
@@ -407,7 +407,7 @@ protected:
   }
 
   void reregistered(
-      const UPID& from,
+      const process::UPID& from,
       const FrameworkID& frameworkId,
       const MasterInfo& masterInfo)
   {
@@ -477,7 +477,7 @@ protected:
   }
 
   void resourceOffers(
-      const UPID& from,
+      const process::UPID& from,
       const vector<Offer>& offers,
       const vector<string>& pids)
   {
@@ -529,7 +529,7 @@ protected:
     VLOG(1) << "Scheduler::resourceOffers took " << stopwatch.elapsed();
   }
 
-  void rescindOffer(const UPID& from, const OfferID& offerId)
+  void rescindOffer(const process::UPID& from, const OfferID& offerId)
   {
     if (aborted) {
       VLOG(1) << "Ignoring rescind offer message because "
@@ -554,10 +554,10 @@ protected:
 
     VLOG(1) << "Rescinded offer " << offerId;
 
-    savedOffers.erase(offerId);
+    process::savedOffers.erase(offerId);
 
-    Stopwatch stopwatch;
-    if (FLAGS_v >= 1) {
+   process:: Stopwatch stopwatch;
+    if (process::FLAGS_v >= 1) {
       stopwatch.start();
     }
 
@@ -567,9 +567,9 @@ protected:
   }
 
   void statusUpdate(
-      const UPID& from,
+      const process::UPID& from,
       const StatusUpdate& update,
-      const UPID& pid)
+      const process::UPID& pid)
   {
     const TaskStatus& status = update.status();
 
@@ -629,7 +629,7 @@ protected:
     }
   }
 
-  void statusUpdateAcknowledgement(const StatusUpdate& update, const UPID& pid)
+  void statusUpdateAcknowledgement(const StatusUpdate& update, const process::UPID& pid)
   {
     if (aborted) {
       VLOG(1) << "Not sending status update acknowledgment message because "
@@ -647,7 +647,7 @@ protected:
     send(pid, message);
   }
 
-  void lostSlave(const UPID& from, const SlaveID& slaveId)
+  void lostSlave(const process::UPID& from, const SlaveID& slaveId)
   {
     if (aborted) {
       VLOG(1) << "Ignoring lost slave message because the driver is aborted!";
@@ -1005,22 +1005,22 @@ private:
   pthread_mutex_t* mutex;
   pthread_cond_t* cond;
   bool failover;
-  Option<UPID> master;
+  Option<process::UPID> master;
 
   bool connected; // Flag to indicate if framework is registered.
   volatile bool aborted; // Flag to indicate if the driver is aborted.
 
   MasterDetector* detector;
 
-  hashmap<OfferID, hashmap<SlaveID, UPID> > savedOffers;
-  hashmap<SlaveID, UPID> savedSlavePids;
+  hashmap<OfferID, hashmap<SlaveID, process::UPID> > savedOffers;
+  hashmap<SlaveID, process::UPID> savedSlavePids;
 
   const Option<Credential> credential;
 
   sasl::Authenticatee* authenticatee;
 
   // Indicates if an authentication attempt is in progress.
-  Option<Future<bool> > authenticating;
+  Option<process::Future<bool> > authenticating;
 
   // Indicates if the authentication is successful.
   bool authenticated;
@@ -1080,7 +1080,7 @@ void MesosSchedulerDriver::initialize() {
   }
 
   // Launch a local cluster if necessary.
-  Option<UPID> pid;
+  Option<process::UPID> pid;
   if (master == "local") {
     pid = local::launch(flags);
   }

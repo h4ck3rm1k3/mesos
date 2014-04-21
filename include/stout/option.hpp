@@ -9,7 +9,7 @@ public:
   Option(const std::list<std::basic_string<char> > x);
   Option();
   Option(None);
-  bool isSome();
-  bool isNone();
-  T get();
+  bool isSome() const;
+  bool isNone() const;
+  T get() const ;
 };

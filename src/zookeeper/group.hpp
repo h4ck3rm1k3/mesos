@@ -3,6 +3,7 @@
 
 #include <map>
 #include <set>
+#include <queue>
 #include <string>
 
 #include "process/future.hpp"
@@ -147,7 +148,7 @@ public:
 };
 
 
-class GroupProcess : public process::Process<GroupProcess>
+class GroupProcess : public Process<GroupProcess>
 {
 public:
   GroupProcess(const std::string& servers,

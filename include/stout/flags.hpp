@@ -9,7 +9,11 @@ namespace flags {
   };
 }
 
-template <class T> class Try{};
+template <class T> class Try
+{
+public:
+  template <class U> Try(U);
+};
 
 
 namespace google {
