@@ -12,4 +12,5 @@ public:
   bool isSome() const;
   bool isNone() const;
   T get() const ;
+  bool operator != (const T &);
 };

@@ -397,7 +397,7 @@ inline std::size_t hash_value(const ContainerID& containerId)
 
 namespace internal {
 
-inline bool operator == (const Task& left, const Task& right)
+  /*inline bool operator == (const Task& left, const Task& right)
 {
   return left.name() == right.name() &&
     left.task_id() == right.task_id() &&
@@ -407,7 +407,7 @@ inline bool operator == (const Task& left, const Task& right)
     Resources(left.resources()) == Resources(right.resources()) &&
     left.has_executor_id() == right.has_executor_id() &&
     (!left.has_executor_id() || (left.executor_id() == right.executor_id()));
-}
+    }*/
 
 
 inline std::ostream& operator << (

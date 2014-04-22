@@ -12,6 +12,7 @@ namespace process {
   class UPID{
   public:
     template <class T> UPID(T);
+    UPID();
     //operator int() const;
     operator const char * () const;
   };
@@ -31,9 +32,10 @@ namespace process {
   public:
     void onDiscard(Event x);
     bool isDiscarded() const;
-    void discard();
+    bool discard();
     bool isFailed() const;
-    void onAny(Event x);
+    bool isReady() const;
+    bool onAny(Event x);
     T get() const;
     std::string failure() const;
   };
@@ -53,6 +55,7 @@ namespace process {
 class ProcessBase {
 public:
   template <class T> void send(T pid, Message & m);
+  template <class T,class U> void send(T pid, U & m);
   void reply(Message & m);
 };
 
@@ -74,33 +77,57 @@ public:
   template <class U, class V, class S> Event defer(S ,U, V);
   template <class U, class V, class X> void install(V x, X y);
   template <class U, class V, class X, class Y> void install(V v, X x, Y y);
-  template <class U, class V, class X, class Y, class Z> void install(V v, X x, Y y, Z z);
+  template <class U, class V, class X, class Y, class Z> void install(V v, X x, Y y, Z z);  
   template <class U, class V, class X, class Y, class Z, class AA> void install(V v, X x, Y y, Z z, AA a);
   template <class U, class V> void install(V x);
 
-  
+  template <class U, class V, class X, class Y> void delay(U u, V v, X x, Y y);
+  template <class U, class V, class X> void delay(U u, V v, X x);
+
+  //  template <class T, class U, class V,class X> X dispatch(T,U,V);
+
   
 };
-namespace process {
-  template <class T> void spawn(T);
-  //  template <class T, class U, class V,class X> X dispatch(T,U,V);
-  template <class T, class U, class V>  Future<bool> dispatch(T,U,V);
-  template <class T> void terminate(T);
-  template <class T> void wait(T);
 
-class Timer {};
+class SavedOffers {
+public:
+  template <class T> void erase(T);
+};
+
+class FlagsVerbose {
+public:
+  bool operator >= (int);
+};
+
+namespace process {
+  template <class U> void wait(U);
+  template <class U> void terminate(U);
+  template <class U> void spawn(U);
+  template <class U, class V, class X> process::Future<bool> dispatch(U,V,X);
+  template <class U, class V, class X, class Y> process::Future<bool> dispatch(U,V,X,Y);
+  template <class U, class V> process::Future<bool> dispatch(U,V);
+  SavedOffers savedOffers ;
+
+  class Timer {};
+  class Seconds {
+    Seconds(int);
+  };
+
+  class Stopwatch {
+  public:
+    void start();
+    long elapsed();
+  };
+
+  FlagsVerbose FLAGS_v; // the verbose flag
+  
+};
+
+
+
+
 class Seconds {
+public:
   Seconds(int);
 };
-
-};
-
-class Stopwatch {
-public:
-  void start();
-  long elapsed();
-};
-
-
-
 

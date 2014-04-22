@@ -95,11 +95,16 @@ namespace internal {
 class SchedulerProcess : public ProtobufProcess<mesos::internal::SchedulerProcess>
 {
 public:
+  class Self {
+public:
+  void authenticationTimeout(process::Future<bool> future);
+  process::Future<bool> authenticate(const process::UPID& pid);
+  void _authenticate();
+  void doReliableRegistration();
+  void statusUpdateAcknowledgement(const StatusUpdate& update, const process::UPID& pid);
+};
 
-  typedef SchedulerProcess Self;
-  SchedulerProcess self();
-
-  static int FLAGS_v; // the verbose flag
+   Self self();
   SchedulerProcess(MesosSchedulerDriver* _driver,
                    Scheduler* _scheduler,
                    const FrameworkInfo& _framework,
@@ -206,8 +211,8 @@ protected:
       //   3. The master failed over to the same master.
       // In any case, we will reconnect (possibly immediately), so we
       // must notify schedulers of the disconnection.
-      Stopwatch stopwatch;
-      if (FLAGS_v >= 1) {
+  process::Stopwatch stopwatch;
+  if (process::FLAGS_v >= 1) {
         stopwatch.start();
       }
 
@@ -390,7 +395,7 @@ protected:
       LOG(WARNING)
         << "Ignoring framework registered message because it was sent "
         << "from '" << from << "' instead of the leading master '"
-        << (master.isSome() ? master.get() : UPID()) << "'";
+      << (master.isSome() ? master.get() : process::UPID()) << "'";
       return;
     }
 
@@ -401,8 +406,8 @@ protected:
     connected = true;
     failover = false;
 
-    Stopwatch stopwatch;
-    if (FLAGS_v >= 1) {
+   process:: Stopwatch stopwatch;
+  if (process::FLAGS_v >= 1) {
       stopwatch.start();
     }
 
@@ -432,7 +437,7 @@ protected:
       LOG(WARNING)
         << "Ignoring framework re-registered message because it was sent "
         << "from '" << from << "' instead of the leading master '"
-        << (master.isSome() ? master.get() : UPID()) << "'";
+      << (master.isSome() ? master.get() : process::UPID()) << "'";
       return;
     }
 
@@ -443,8 +448,8 @@ protected:
     connected = true;
     failover = false;
 
-    Stopwatch stopwatch;
-    if (FLAGS_v >= 1) {
+    process::Stopwatch stopwatch;
+    if (process::FLAGS_v >= 1) {
       stopwatch.start();
     }
 
@@ -514,9 +519,9 @@ protected:
     // Save the pid associated with each slave (one per offer) so
     // later we can send framework messages directly.
     for (size_t i = 0; i < offers.size(); i++) {
-      UPID pid(pids[i]);
+      process::UPID pid(pids[i]);
       // Check if parse failed (e.g., due to DNS).
-      if (pid != UPID()) {
+      if (pid != process::UPID()) {
         VLOG(3) << "Saving PID '" << pids[i] << "'";
         savedOffers[offers[i].id()][offers[i].slave_id()] = pid;
       } else {
@@ -524,8 +529,8 @@ protected:
       }
     }
 
-    Stopwatch stopwatch;
-    if (FLAGS_v >= 1) {
+  process::  Stopwatch stopwatch;
+    if (process::FLAGS_v >= 1) {
       stopwatch.start();
     }
 
@@ -585,7 +590,7 @@ protected:
     }
 
     // Allow status updates created from the driver itself.
-    if (from != UPID()) {
+    if (from != process::UPID()) {
       if (!connected) {
         VLOG(1) << "Ignoring status update message because the driver is "
                 << "disconnected!";
@@ -615,8 +620,8 @@ protected:
     // multiple times (of course, if a scheduler re-uses a TaskID,
     // that could be bad.
 
-    Stopwatch stopwatch;
-    if (FLAGS_v >= 1) {
+ process:: Stopwatch stopwatch;
+    if (process::FLAGS_v >= 1) {
       stopwatch.start();
     }
 
@@ -629,7 +634,7 @@ protected:
     // we want to avoid sending the ACK if the driver was aborted when we
     // made the statusUpdate call. This works because, the 'abort' message will
     // be enqueued before the ACK message is processed.
-    if (pid != UPID()) {
+    if (pid != process::UPID()) {
       dispatch(self(), &Self::statusUpdateAcknowledgement, update, pid);
     }
   }
@@ -701,7 +706,7 @@ protected:
     VLOG(2) << "Received framework message";
 
     Stopwatch stopwatch;
-    if (FLAGS_v >= 1) {
+  if (process::FLAGS_v >= 1) {
       stopwatch.start();
     }
 
@@ -721,8 +726,8 @@ protected:
 
     driver->abort();
 
-    Stopwatch stopwatch;
-    if (FLAGS_v >= 1) {
+  process:: Stopwatch stopwatch;
+    if (process::FLAGS_v >= 1) {
       stopwatch.start();
     }
 
@@ -737,7 +742,7 @@ protected:
 
     // Whether or not we send an unregister message, we want to
     // terminate this process.
-    terminate(self());
+  process::terminate(self());
 
     if (connected && !failover) {
       UnregisterFrameworkMessage message;
@@ -829,7 +834,7 @@ protected:
         update.set_timestamp(Clock::now().secs());
         update.set_uuid(UUID::random().toBytes());
 
-        statusUpdate(UPID(), update, UPID());
+        statusUpdate(process::UPID(), update, process::UPID());
       }
       return;
     }
@@ -850,7 +855,7 @@ protected:
         update.set_timestamp(Clock::now().secs());
         update.set_uuid(UUID::random().toBytes());
 
-        statusUpdate(UPID(), update, UPID());
+        statusUpdate(process::UPID(), update, process::UPID());
         continue;
       }
 
@@ -870,7 +875,7 @@ protected:
         update.set_timestamp(Clock::now().secs());
         update.set_uuid(UUID::random().toBytes());
 
-        statusUpdate(UPID(), update, UPID());
+        statusUpdate(process::UPID(), update, process::UPID());
         continue;
       }
 
@@ -960,8 +965,8 @@ protected:
     // accepted.
 
     if (savedSlavePids.count(slaveId) > 0) {
-      UPID slave = savedSlavePids[slaveId];
-      CHECK(slave != UPID());
+  process::UPID slave = savedSlavePids[slaveId];
+      CHECK(slave != process::UPID());
 
       FrameworkToExecutorMessage message;
       message.mutable_slave_id()->MergeFrom(slaveId);
