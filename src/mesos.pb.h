@@ -17,6 +17,8 @@ bool operator == (const std::string, StringAtom) ;
 
 std::ostream & operator << (std::ostream &, const StringAtom & );
 
+
+
 class Value {
  public:
   enum type {
@@ -53,6 +55,7 @@ class ID {
 class FrameworkID : public ID{
  public:
 
+  template<class T> void MergeFrom(const T &);
   //  bool operator ==(const char * ) const;    
 };
 
@@ -107,17 +110,12 @@ class MasterInfo{
 
 class SlaveID : public ID{
  public:
-
+  template<class T> void MergeFrom(const T &);
 };
 
-class Status { 
- public:
-  StringAtom state() const;
-  StringAtom task_id() const;
-  const FrameworkID & framework_id() const;
-};
+std::ostream & operator << (std::ostream &, const SlaveID & );
 
-class TaskStatus : public Status {};
+
 
 
 class FrameworkInfo{
@@ -132,11 +130,7 @@ class FrameworkInfo{
 
 class Request{};
 class Filters{};
-class TaskInfo{
- public:
-  const char * DebugString() const;
-};
-class TaskState{};
+
 
 class EnumValueDescriptor {
  public:
@@ -154,7 +148,39 @@ EnumDescriptor * TaskState_descriptor();
 
 class TaskID : public ID {
  public:
+  template<class T> void MergeFrom(const T &);
+};
 
+std::ostream & operator << (std::ostream &, const TaskID & );
+
+class Status { 
+ public:
+  StringAtom state() const;
+  const TaskID & task_id() const;
+  const FrameworkID & framework_id() const;
+};
+
+class TaskInfo{
+ public:
+  const char * DebugString() const;
+  TaskID * mutable_task_id();
+  const TaskID & mutable_id();
+  const TaskID & task_id() const;
+  
+};
+
+class TaskState{
+};
+enum TaskStateEnum {
+  TASK_LOST
+}; 
+
+class TaskStatus : public Status {
+ public:
+  TaskID * mutable_task_id();
+  const TaskID & task_id() const;
+  template <class T> void set_state(T);
+  template <class T> void set_message(T);
 };
 
 class ContainerID: public ID{
@@ -254,6 +280,7 @@ class Collection{
  public:
   int size() const;
   const T &  Get(int) const;
+  template<class U> void MergeFrom(const U &);
 };
 
 class CommandInfo {
@@ -274,9 +301,12 @@ class CommandInfo {
 class StatusUpdate {
  public:
   const TaskStatus  & status() const;
+  TaskStatus  * mutable_status();
   StringAtom uuid() const;
+  const SlaveID & slave_id() const;
   const FrameworkID & framework_id() const;
-  
+  FrameworkID * mutable_framework_id();
+  template <class T> void set_uuid(T);
 };
 
 class StatusUpdateRecord {
@@ -341,7 +371,7 @@ mesos::internal::Attributes attributes() const;
 class Task {
  public:
   StringAtom name() const;
-  StringAtom task_id() const;
+  const TaskID & task_id() const;
   const FrameworkID & framework_id() const;
   StringAtom slave_id() const;
   bool has_executor_id() const;
@@ -350,9 +380,15 @@ class Task {
   mesos::Resources resources() const;
 };
 
+class Num {
+ public:
+  unsigned char * toBytes();
+};
+
 class UUID {
 public:
 template <class T> static UUID fromBytes(T);
+ static Num random();
 };
 
 
@@ -412,7 +448,32 @@ class ReregisterFrameworkMessage {
   void set_failover(int);
 };
 
-class StatusUpdateAcknowledgementMessage {};
-class UnregisterFrameworkMessage {};
-class DeactivateFrameworkMessage{};
-class KillTaskMessage{};
+class StatusUpdateAcknowledgementMessage {
+ public:
+  FrameworkID * mutable_framework_id();
+  SlaveID * mutable_slave_id();
+  TaskID * mutable_task_id();
+  template <class T> void set_uuid(T);
+};
+
+class UnregisterFrameworkMessage {
+ public:
+  FrameworkID * mutable_framework_id();
+};
+
+class DeactivateFrameworkMessage{
+ public:
+  FrameworkID * mutable_framework_id();
+};
+
+class KillTaskMessage{
+ public:
+  FrameworkID * mutable_framework_id();
+  TaskID * mutable_task_id();
+};
+
+class ResourceRequestMessage {
+ public:
+  FrameworkID * mutable_framework_id();
+  Collection<Request> * add_requests() const;
+};

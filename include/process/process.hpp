@@ -123,11 +123,14 @@ namespace process {
   
 };
 
-
-
-
 class Seconds {
 public:
   Seconds(int);
+  int secs();
 };
 
+
+class Clock {
+public:
+  static Seconds now();
+};

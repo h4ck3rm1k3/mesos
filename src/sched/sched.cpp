@@ -683,8 +683,8 @@ protected:
 
     savedSlavePids.erase(slaveId);
 
-    Stopwatch stopwatch;
-    if (FLAGS_v >= 1) {
+  process::Stopwatch stopwatch;
+    if (process::FLAGS_v >= 1) {
       stopwatch.start();
     }
 
@@ -705,7 +705,7 @@ protected:
 
     VLOG(2) << "Received framework message";
 
-    Stopwatch stopwatch;
+    process::Stopwatch stopwatch;
   if (process::FLAGS_v >= 1) {
       stopwatch.start();
     }
