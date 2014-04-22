@@ -95,6 +95,11 @@ namespace internal {
 class SchedulerProcess : public ProtobufProcess<mesos::internal::SchedulerProcess>
 {
 public:
+
+  typedef SchedulerProcess Self;
+  SchedulerProcess self();
+
+  static int FLAGS_v; // the verbose flag
   SchedulerProcess(MesosSchedulerDriver* _driver,
                    Scheduler* _scheduler,
                    const FrameworkInfo& _framework,

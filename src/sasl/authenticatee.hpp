@@ -46,6 +46,7 @@ class AuthenticateeProcess;
 class Authenticatee
 {
 public:
+
   // 'credential' is used to authenticate the 'client'.
   Authenticatee(const Credential& credential, const process::UPID& client);
   ~Authenticatee();
@@ -178,7 +179,7 @@ public:
     status = STARTING;
 
     // Stop authenticating if nobody cares.
-    promise.future().onDiscard(defer(self(), &Self::discarded));
+    promise.future().onDiscard(defer(self(), &AuthenticateeProcess::discarded));
 
     return promise.future();
   }

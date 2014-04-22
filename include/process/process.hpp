@@ -8,10 +8,14 @@ namespace lambda {
 namespace process {
   template <class T> class PID{};
   template <class T> class Owned{};
+
   class UPID{
   public:
-     operator int() const;
+    template <class T> UPID(T);
+    //operator int() const;
+    operator const char * () const;
   };
+
   class Once{
   public:
     bool once();
@@ -27,9 +31,11 @@ namespace process {
   public:
     void onDiscard(Event x);
     bool isDiscarded() const;
+    void discard();
     bool isFailed() const;
     void onAny(Event x);
-    std::string failure();
+    T get() const;
+    std::string failure() const;
   };
 
 
@@ -46,14 +52,11 @@ namespace process {
 
 class ProcessBase {
 public:
-  void send(int pid, Message & m);
+  template <class T> void send(T pid, Message & m);
   void reply(Message & m);
 };
 
-class Self {
-public:
-  void discarded();
-};
+
 
 
 template <class T> class Process : public ProcessBase
@@ -65,14 +68,17 @@ template <class T> class ProtobufProcess : public ProcessBase
 public:
   ProtobufProcess();
   ProtobufProcess(process::ID);
-  Self self();
-  template <class U> Event defer(Self,U);
-  template <class U, class V> Event defer(Self,U, V);
+  ProtobufProcess self();
+  void link(process::UPID);
+  template <class U, class S> Event defer(S,U);
+  template <class U, class V, class S> Event defer(S ,U, V);
   template <class U, class V, class X> void install(V x, X y);
   template <class U, class V, class X, class Y> void install(V v, X x, Y y);
   template <class U, class V, class X, class Y, class Z> void install(V v, X x, Y y, Z z);
   template <class U, class V, class X, class Y, class Z, class AA> void install(V v, X x, Y y, Z z, AA a);
   template <class U, class V> void install(V x);
+
+  
   
 };
 namespace process {
@@ -83,5 +89,18 @@ namespace process {
   template <class T> void wait(T);
 
 class Timer {};
+class Seconds {
+  Seconds(int);
+};
 
 };
+
+class Stopwatch {
+public:
+  void start();
+  long elapsed();
+};
+
+
+
+
