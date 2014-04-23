@@ -4,3 +4,5 @@ namespace strings {
   template <class T> std::string trim(const T &);
 
 }
+
+template <class T> std::string stringify(T);

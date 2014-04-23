@@ -339,7 +339,7 @@ protected:
       reauthenticate = false;
 
       // TODO(vinod): Add a limit on number of retries.
-      dispatch(self(), &Self::authenticate); // Retry.
+      process::dispatch(self(), &Self::authenticate); // Retry.
       return;
     }
 
@@ -635,7 +635,7 @@ protected:
     // made the statusUpdate call. This works because, the 'abort' message will
     // be enqueued before the ACK message is processed.
     if (pid != process::UPID()) {
-      dispatch(self(), &Self::statusUpdateAcknowledgement, update, pid);
+      process::dispatch(self(), &Self::statusUpdateAcknowledgement, update, pid);
     }
   }
 
@@ -1044,7 +1044,7 @@ private:
 
 
 void MesosSchedulerDriver::initialize() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
+  //GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   // Load any flags from the environment (we use local::Flags in the
   // event we run in 'local' mode, since it inherits logging::Flags).
@@ -1238,7 +1238,7 @@ Status MesosSchedulerDriver::stop(bool failover)
   // it due to bad parameters (e.g. error in creating the detector
   // or loading flags).
   if (process != NULL) {
-    dispatch(process, &SchedulerProcess::stop, failover);
+  process::dispatch(process, &SchedulerProcess::stop, failover);
   }
 
   // TODO: It might make more sense to clean up our local cluster here than in
@@ -1274,7 +1274,7 @@ Status MesosSchedulerDriver::abort()
   // Dispatching here ensures that we still process the outstanding
   // requests *from* the scheduler, since those do proceed when
   // aborted is true.
-  dispatch(process, &SchedulerProcess::abort);
+  process::dispatch(process, &SchedulerProcess::abort);
 
   return status = DRIVER_ABORTED;
 }
@@ -1315,7 +1315,7 @@ Status MesosSchedulerDriver::killTask(const TaskID& taskId)
 
   CHECK(process != NULL);
 
-  dispatch(process, &SchedulerProcess::killTask, taskId);
+  process::dispatch(process, &SchedulerProcess::killTask, taskId);
 
   return status;
 }
@@ -1346,7 +1346,7 @@ Status MesosSchedulerDriver::launchTasks(
 
   CHECK(process != NULL);
 
-  dispatch(process, &SchedulerProcess::launchTasks, offerIds, tasks, filters);
+  process::dispatch(process, &SchedulerProcess::launchTasks, offerIds, tasks, filters);
 
   return status;
 }
@@ -1373,7 +1373,7 @@ Status MesosSchedulerDriver::reviveOffers()
 
   CHECK(process != NULL);
 
-  dispatch(process, &SchedulerProcess::reviveOffers);
+  process::dispatch(process, &SchedulerProcess::reviveOffers);
 
   return status;
 }
@@ -1392,7 +1392,7 @@ Status MesosSchedulerDriver::sendFrameworkMessage(
 
   CHECK(process != NULL);
 
-  dispatch(process, &SchedulerProcess::sendFrameworkMessage,
+  process::dispatch(process, &SchedulerProcess::sendFrameworkMessage,
            executorId, slaveId, data);
 
   return status;
@@ -1410,7 +1410,7 @@ Status MesosSchedulerDriver::reconcileTasks(
 
   CHECK(process != NULL);
 
-  dispatch(process, &SchedulerProcess::reconcileTasks, statuses);
+  process::dispatch(process, &SchedulerProcess::reconcileTasks, statuses);
 
   return status;
 }
@@ -1427,7 +1427,7 @@ Status MesosSchedulerDriver::requestResources(
 
   CHECK(process != NULL);
 
-  dispatch(process, &SchedulerProcess::requestResources, requests);
+  process::dispatch(process, &SchedulerProcess::requestResources, requests);
 
   return status;
 }

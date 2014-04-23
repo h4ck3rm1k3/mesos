@@ -160,19 +160,15 @@ class Status {
   const FrameworkID & framework_id() const;
 };
 
-class TaskInfo{
- public:
-  const char * DebugString() const;
-  TaskID * mutable_task_id();
-  const TaskID & mutable_id();
-  const TaskID & task_id() const;
-  
-};
 
 class TaskState{
 };
 enum TaskStateEnum {
-  TASK_LOST
+  TASK_LOST,
+  DRIVER_ABORTED,
+  DRIVER_RUNNING,
+  DRIVER_STOPPED,
+  
 }; 
 
 class TaskStatus : public Status {
@@ -307,6 +303,7 @@ class StatusUpdate {
   const FrameworkID & framework_id() const;
   FrameworkID * mutable_framework_id();
   template <class T> void set_uuid(T);
+  template <class T> void set_timestamp(T);
 };
 
 class StatusUpdateRecord {
@@ -339,6 +336,7 @@ class Error {
 
 class ExecutorInfo{
  public:
+  FrameworkID * mutable_framework_id();
   const char * DebugString() const;
   mesos::Resources resources() const;
   const FrameworkID & framework_id() const;
@@ -477,3 +475,21 @@ class ResourceRequestMessage {
   FrameworkID * mutable_framework_id();
   Collection<Request> * add_requests() const;
 };
+
+class TaskInfo{
+ public:
+  const char * DebugString() const;
+  TaskID * mutable_task_id();
+  const TaskID & mutable_id();
+  const TaskID & task_id() const;
+  bool has_command() const;
+  template <class T> void set_timestamp(T);  
+  bool has_executor() const;
+  const ExecutorInfo & executor() const;
+  ExecutorInfo * mutable_executor();
+  const SlaveID & slave_id() const;
+};
+class LaunchTasksMessage {};
+class ReviveOffersMessage {};
+class FrameworkToExecutorMessage{};
+class ReconcileTasksMessage {};
