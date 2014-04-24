@@ -57,6 +57,7 @@
 #include "sasl/authenticatee.hpp"
 
 #include "common/lock.hpp"
+long hash_value(const Value::Scalar&);
 #include "common/type_utils.hpp"
 #include "process/process.hpp"
 #include "master/detector.hpp"
@@ -1220,7 +1221,7 @@ Status MesosSchedulerDriver::start()
         this, scheduler, framework, cred, detector, &mutex, &cond);
   }
 
-  spawn(process);
+  process::spawn(process);
 
   return status = DRIVER_RUNNING;
 }

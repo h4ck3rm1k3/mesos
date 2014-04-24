@@ -6,6 +6,7 @@ namespace lambda {
   void _1();
 }
 namespace process {
+  void initialize();
   template <class T> class PID{};
   template <class T> class Owned{};
 
@@ -105,6 +106,7 @@ namespace process {
   template <class U> void spawn(U);
   template <class U, class V, class X> process::Future<bool> dispatch(U,V,X);
   template <class U, class V, class X, class Y> process::Future<bool> dispatch(U,V,X,Y);
+  template <class U, class V, class X, class Y, class Z> process::Future<bool> dispatch(U,V,X,Y,Z);
   template <class U, class V> process::Future<bool> dispatch(U,V);
   SavedOffers savedOffers ;
 

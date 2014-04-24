@@ -1,6 +1,7 @@
 class StringAtom {
  public:
   const char * data() const;
+  const char * get() const;
   bool empty() const;
   const char * c_str() const;
   operator std::string ();
@@ -117,9 +118,6 @@ class SlaveID : public ID{
 
 std::ostream & operator << (std::ostream &, const SlaveID & );
 
-
-
-
 class FrameworkInfo{
  public:
   const FrameworkID & id() const;
@@ -128,6 +126,10 @@ class FrameworkInfo{
   StringAtom * mutable_id() const;
   bool has_id() const;
   template <class T> void MergeFrom(const T &);
+
+  template <class T> void set_user(T);
+  StringAtom hostname() const;
+  template <class T> void set_hostname(T);
 };
 
 class Request{};
@@ -158,24 +160,29 @@ class TaskID : public ID {
 
 std::ostream & operator << (std::ostream &, const TaskID & );
 
-class Status { 
- public:
-  StringAtom state() const;
-  const TaskID & task_id() const;
-  const FrameworkID & framework_id() const;
-  template <class T> bool operator = (T );
-};
-
-
-class TaskState{
-};
 enum TaskStateEnum {
   TASK_LOST,
   DRIVER_ABORTED,
   DRIVER_RUNNING,
   DRIVER_STOPPED,
-  
+  DRIVER_NOT_STARTED,
 }; 
+
+class Status { 
+ public:
+  Status(TaskStateEnum);
+  StringAtom state() const;
+  const TaskID & task_id() const;
+  const FrameworkID & framework_id() const;
+  template <class T> Status & operator = (T );
+  template <class T> bool operator == (T );
+  template <class U> bool operator!=( U ) const;
+};
+
+
+class TaskState{
+};
+
 
 class TaskStatus : public Status {
  public:

@@ -7,6 +7,7 @@ template <class T> class Try
 {
 public:
   template <class U> Try(U);
+  T get();
   bool isError() const;
   const char * error() const;
 };
