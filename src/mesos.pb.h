@@ -56,6 +56,7 @@ class FrameworkID : public ID{
  public:
 
   template<class T> void MergeFrom(const T &);
+  template<class T> void CopyFrom(const T &);
   //  bool operator ==(const char * ) const;    
 };
 
@@ -129,7 +130,10 @@ class FrameworkInfo{
 };
 
 class Request{};
-class Filters{};
+class Filters{
+ public:
+  template <class T> void MergeFrom(const T &);
+};
 
 
 class EnumValueDescriptor {
@@ -432,7 +436,7 @@ class FrameworkReregisteredMessage{
 };
 class RescindResourceOfferMessage {
  public:
-  StringAtom offer_id() const;
+  OfferID offer_id() const;
 };
 
 class RegisterFrameworkMessage {
@@ -489,7 +493,12 @@ class TaskInfo{
   ExecutorInfo * mutable_executor();
   const SlaveID & slave_id() const;
 };
-class LaunchTasksMessage {};
+class LaunchTasksMessage {
+ public:
+  FrameworkID * mutable_framework_id();
+  Filters * mutable_filters();
+  Collection<OfferID> * add_offer_ids();
+};
 class ReviveOffersMessage {};
 class FrameworkToExecutorMessage{};
 class ReconcileTasksMessage {};
