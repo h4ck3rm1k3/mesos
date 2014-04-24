@@ -1,6 +1,7 @@
 class StringAtom {
  public:
   const char * data() const;
+  bool empty() const;
   const char * c_str() const;
   operator std::string ();
   //  bool operator == (std::string) const;
@@ -67,6 +68,7 @@ std::ostream & operator << (std::ostream &,const FrameworkID );
 
 class OfferID : public ID{
  public:
+  template<class T> void MergeFrom(const T &);
 
 };
 
@@ -78,10 +80,9 @@ class Offer {
   StringAtom slave_id() const;
 };
 
-
-
 class ExecutorID : public ID{
  public:
+  template<class T> void MergeFrom(const T &);
 };
 
 class Resource {
@@ -162,6 +163,7 @@ class Status {
   StringAtom state() const;
   const TaskID & task_id() const;
   const FrameworkID & framework_id() const;
+  template <class T> bool operator = (T );
 };
 
 
@@ -498,7 +500,24 @@ class LaunchTasksMessage {
   FrameworkID * mutable_framework_id();
   Filters * mutable_filters();
   Collection<OfferID> * add_offer_ids();
+  Collection<TaskInfo>  * add_tasks();
+  OfferID * mutable_offer_id();
+
 };
-class ReviveOffersMessage {};
-class FrameworkToExecutorMessage{};
-class ReconcileTasksMessage {};
+class ReviveOffersMessage {
+ public:
+  FrameworkID * mutable_framework_id();
+};
+class FrameworkToExecutorMessage{
+ public:
+  SlaveID * mutable_slave_id();
+  FrameworkID * mutable_framework_id();
+  ExecutorID * mutable_executor_id();
+  template <class T> void set_data(T);
+};
+
+class ReconcileTasksMessage {
+ public:
+  FrameworkID * mutable_framework_id();  
+  Collection<Status> * add_statuses();
+};
